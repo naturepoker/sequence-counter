@@ -66,6 +66,19 @@ uniq -c ungapped.ctmp > ungapped_list.ctmp
 gapped_total=$(uniq -c gapped.ctmp | awk '{sum += $1}END{print sum}')
 ungapped_total=$(uniq -c ungapped.ctmp | awk '{sum += $1}END{print sum}')
 
+#Now we'll take the established files and variables to calculate the GC content of the given sequence
+#First, we'll use tail to isolate the last two lines of the uniq -c output
+#And the cut command is used with delimiter set at a space, and isolates the 2nd field, which is actually the first column
+#The last two lines of the first column will always contain G and C count numbers- we add + to the output using paste
+#And call bc to add the two values together. This gives us the variable gc containing total G and C base counts in the sequence
+
+gc=$(tail -n 2 gapped_list.ctmp | cut -d' ' -f2 | paste -sd+ - | bc)
+
+#Now it's just a matter of creating a variable containing the GC base numbers divided by the total number of known bases 
+#We simply divide the gc variable against the ungapped sequence total variable using bc- scale tag sets the accuracy
+
+gc_content=$(echo "scale=4 ; $gc/$ungapped_total" | bc)
+
 #Below is the final output, what the user will actually see after running the script
 #The uniq -c output is simply displayed via cat command
 #Notice how echo treats the $variables for gapped and ungapped totals embedded in the terminal output
@@ -78,6 +91,8 @@ echo "--------------------------------------------------"
 echo "Total gapped sequence length is: $gapped_total"
 echo "--------------------------------------------------"
 echo "Total ungapped sequence length is: $ungapped_total"
+echo "--------------------------------------------------"
+echo "GC content in $1 is $gc_content                   "
 echo "##################################################"
 echo "                                                  "
 
