@@ -68,11 +68,11 @@ ungapped_total=$(uniq -c ungapped.ctmp | awk '{sum += $1}END{print sum}')
 
 #Now we'll take the established files and variables to calculate the GC content of the given sequence
 #First, we'll use tail to isolate the last two lines of the uniq -c output
-#And the cut command is used with delimiter set at a space, and isolates the 2nd field, which is actually the first column
+#And we're going to use awk to isolate the first column containing only the base count
 #The last two lines of the first column will always contain G and C count numbers- we add + to the output using paste
 #And call bc to add the two values together. This gives us the variable gc containing total G and C base counts in the sequence
 
-gc=$(tail -n 2 gapped_list.ctmp | cut -d' ' -f2 | paste -sd+ - | bc)
+gc=$(tail -n 2 gapped_list.ctmp | awk '{print $1}' | paste -sd+ - | bc)
 
 #Now it's just a matter of creating a variable containing the GC base numbers divided by the total number of known bases 
 #We simply divide the gc variable against the ungapped sequence total variable using bc- scale tag sets the accuracy
