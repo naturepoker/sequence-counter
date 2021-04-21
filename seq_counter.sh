@@ -25,11 +25,11 @@ sed '/^>/d' < "$1" > "$1"_headless.ctmp
 #The _headless.ctmp is catted into tr , with -d (deletion) tag and [:space:] option
 #The [:space:] removes all horizontal and vertical whitespace from the input file
 
-cat "$1"_headless.ctmp | tr -d [:space:] > "$1"_raw.ctmp
+cat "$1"_headless.ctmp | tr -d '[:space:]' > "$1"_raw.ctmp
 
 #The cleaned up input file ( _raw.ctmp now ) is further tr'd to turn any lowercase letters to uppercase
 
-cat "$1"_raw.ctmp | tr [:lower:] [:upper:] > "$1"_clean.ctmp
+cat "$1"_raw.ctmp | tr '[:lower:]' '[:upper:]' > "$1"_clean.ctmp
 
 #Now that the input file is filtered (no header, no whitespace, all uppercase) we use grep with -o option
 #With the -o option, the command will only retrieve the individual letters matching the request, A,T,C,G, and N
@@ -77,7 +77,7 @@ gc=$(tail -n 2 gapped_list.ctmp | awk '{print $1}' | paste -sd+ - | bc)
 #Now it's just a matter of creating a variable containing the GC base numbers divided by the total number of known bases 
 #We simply divide the gc variable against the ungapped sequence total variable using bc- scale tag sets the accuracy
 
-gc_content=$(echo "scale=4 ; $gc/$ungapped_total" | bc)
+gc_content=$(echo "scale=2 ; $gc/$ungapped_total*100" | bc)
 
 #Below is the final output, what the user will actually see after running the script
 #The uniq -c output is simply displayed via cat command
@@ -92,7 +92,7 @@ echo "Total gapped sequence length is: $gapped_total"
 echo "--------------------------------------------------"
 echo "Total ungapped sequence length is: $ungapped_total"
 echo "--------------------------------------------------"
-echo "GC content in $1 is $gc_content                   "
+echo "GC content in $1 is $gc_content %                 "
 echo "##################################################"
 echo "                                                  "
 
