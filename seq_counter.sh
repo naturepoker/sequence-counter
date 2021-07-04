@@ -77,7 +77,7 @@ gc=$(tail -n 2 gapped_list.ctmp | awk '{print $1}' | paste -sd+ - | bc)
 #Now it's just a matter of creating a variable containing the GC base numbers divided by the total number of known bases 
 #We simply divide the gc variable against the ungapped sequence total variable using bc- scale tag sets the accuracy
 
-gc_content=$(echo "scale=2 ; $gc/$ungapped_total*100" | bc)
+gc_content=$(echo "scale=4 ; $gc/$ungapped_total*100" | bc | cut -c-5)
 
 #Below is the final output, what the user will actually see after running the script
 #The uniq -c output is simply displayed via cat command
